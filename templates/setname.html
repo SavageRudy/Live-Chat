@@ -1,0 +1,12 @@
+{% extends 'template.html' %}
+
+{% block content %}
+    <form action="setname" method="POST">
+        <label>
+            Username:
+            <input name="username" type="text">
+        </label>
+
+        <button type="submit"> Submit </button>
+    </form>
+{% endblock %}

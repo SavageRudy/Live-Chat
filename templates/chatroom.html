@@ -1,0 +1,109 @@
+{% extends 'template.html' %}
+
+{% block content%}
+    <div id="user-name" data-name="{{username}}">Your username : {{ username }}</div>
+
+    <div>Channel Name: {{ channel_name }}</div>
+
+    <div> Chat : </div>
+    <div class="chat" id="channel-name" data-name="{{channel_name}}">
+        {% for message in messages %}
+        <div data-name="{{message.messageID}}"> {{ message.timeStamp.strftime("%d/%m/%Y %H:%M:%S") }} : [{{ message.userName}}] : {{ message.Message}}
+            {% if message.userName == username %}
+                <a class="delete-btn"> delete</a>
+            {% endif %}
+        </div> 
+        {% endfor %}
+    </div>
+
+    <input type="text" id="input_field" placeholder="Send Message...">
+    <button id="send_btn"> Send </button>
+
+    <script>
+        var host = 'http://127.0.0.1:5000'
+        var socket = io.connect(host)
+        var channelName = ""
+        var userName = ""
+        
+    
+        socket.on('connect', (msg) => {
+            console.log(`Trying to connect to ${host}...`)
+        })
+
+        socket.on('message', (json) => {
+            
+            var user = json.username
+            var timestamp = json.time_stamp
+            var msg = json.msg
+            var type = json.type
+            var msg_id = json.msg_id
+
+            var dom =`<div data-name="${msg_id}">  ${timestamp} : [${user}] : ${msg}`
+            dom += (userName == user)?`<a class="delete-btn"> delete</a>`:''
+            dom += '</div>'
+
+            $('.chat').append(dom)
+            
+
+            console.log(msg_id)
+        })
+
+        socket.on('message_deleted', function(msg_id) {
+
+            console.log(msg_id)
+
+            var elem = $(`[data-name=${msg_id}]`)
+
+            console.log(elem)
+
+            $(elem).remove()
+
+        })
+
+    
+        $(document).ready(function() {
+        
+            channelName = $('#channel-name').data().name;
+            userName = $('#user-name').data().name;
+
+
+            socket.emit('joinroom', channelName)
+        
+
+        })
+
+        $('#send_btn').click(function() {
+            var msg = $('#input_field').val()
+
+            var data = {
+                channelName: channelName,
+                message: msg
+            }
+
+            socket.emit('send_message',JSON.stringify(data))
+
+            $('#input_field').val('')
+
+        })
+
+        $('.chat').on('click','.delete-btn',function(e) {
+            var msg_id = $(e.target).parent().data().name
+
+            data = {
+                channelName: channelName,
+                msg_id: msg_id
+            }
+
+            socket.emit('delete_message',JSON.stringify(data))
+        })
+
+
+    </script>
+
+    <style>
+        .delete-btn {
+            text-decoration: underline;
+            cursor: pointer;
+        }
+    </style>
+{% endblock %}

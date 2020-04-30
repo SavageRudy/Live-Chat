@@ -1,0 +1,37 @@
+{% extends 'template.html' %}
+
+{% block content%}
+    <div style="font-weight: bolder;font-size: large;">Your username : {{ username }}</div>
+
+    <!-- Channel Lists Display here... -->
+    <div>
+        <h2>Channel List</h2>
+        <ul class="channel-list" id="channel_list">
+            {% for channel in channel_list %}
+                <li>
+                    <a>{{ channel.channelName}} -  Owner: {{channel.ownerName}}</a>
+                    <a href="/chat/{{channel.channelName}}">Join Channel</a>
+                </li>
+            {% endfor %}
+        </ul>
+    </div>
+
+    <div>
+        <a href="/channel/create">Create Channel</a>
+    </div>
+
+    <script>
+
+        var host = 'http://127.0.0.1:5000'
+        var socket = io.connect(host)
+    
+        socket.on('connect', (msg) => {
+            console.log(`Trying to connect to ${host}...`)
+        })
+
+        socket.on('message', (msg) => {
+            console.log(msg)
+        })
+    
+    </script>
+{% endblock %}

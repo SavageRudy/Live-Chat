@@ -1,0 +1,16 @@
+{% extends 'template.html' %}
+
+{% block content%}
+    Your username : {{ username }}
+
+    <div> Create new channel : </div>
+
+    <form action="/channel/create" method="POST">
+        <label>
+            Channel Name :
+            <input name="channelName" type="text" placeholder="Enter channel name">
+        </label>
+        <button type="submit">Submit</button>
+    </form>
+
+{% endblock %}

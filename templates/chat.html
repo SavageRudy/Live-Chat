@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>
+            Chat Index
+        </title>
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/1.4.8/socket.io.min.js"></script>
+    </head>
+    <body>
+        
+        <div style="font-size: xx-large;font-weight: 800;">CHAT</div>
+        
+        <ul id=m1 ></ul>
+        <input type="text" id="my_msg">
+        <button id="send">Send</button>
+        <script>
+            document.addEventListener('DOMContentLoaded', ()=>{
+                var socket = io.connect('http://127.0.0.1:5000');
+                socket.on('connect',function(){
+                    socket.send("USer has connected")});
+                document.querySelector('button').onclick=()=>{
+                    text=document.querySelector('#my_msg').value;
+                    socket.send(text);
+                    document.querySelector('#my_msg').value=" ";
+                }
+                socket.on('msg_sent',data =>{
+                    const li= document.createElement('li');
+                    li.innerHTML = `Message: ${data.msg}`;                    
+                    console.log(li);
+                    document.querySelector('#m1').append(li);
+                    }
+                );    
+            });
+        </script>
+
+    </body>
+
+</html>
