@@ -1,4 +1,4 @@
-# Project 2
+Live Chat using Flask Socket io
 
 Web Programming with Python and JavaScript
 This is a real time live chat.
